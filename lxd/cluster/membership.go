@@ -188,7 +188,7 @@ func Accept(state *state.State, gateway *Gateway, name, address string, schema, 
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get raft nodes from the log")
 	}
-	if len(nodes) < membershipMaxRaftNodes {
+	if membershipMaxRaftNodes < 0 || len(nodes) < membershipMaxRaftNodes {
 		err = state.Node.Transaction(func(tx *db.NodeTx) error {
 			id, err := tx.RaftNodeAdd(address)
 			if err != nil {
@@ -444,7 +444,7 @@ func Rebalance(state *state.State, gateway *Gateway) (string, []db.RaftNode, err
 	if err != nil {
 		return "", nil, errors.Wrap(err, "failed to get current raft nodes")
 	}
-	if len(currentRaftNodes) >= membershipMaxRaftNodes {
+	if membershipMaxRaftNodes > 0 && len(currentRaftNodes) >= membershipMaxRaftNodes {
 		// We're already at full capacity.
 		return "", nil, nil
 	}
@@ -944,4 +944,4 @@ var SchemaVersion = cluster.SchemaVersion
 // We currently aim at having 3 nodes part of the raft dqlite cluster.
 //
 // TODO: this number should probably be configurable.
-const membershipMaxRaftNodes = 3
+const membershipMaxRaftNodes = -1
