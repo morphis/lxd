@@ -833,12 +833,14 @@ func (s *storageZfs) ContainerCreateFromImage(container container, fingerprint s
 		return err
 	}
 
-	if !privileged {
-		err = s.shiftRootfs(container)
-		if err != nil {
-			return err
+	/*
+		if !privileged {
+			err = s.shiftRootfs(container)
+			if err != nil {
+				return err
+			}
 		}
-	}
+	*/
 
 	err = container.TemplateApply("create")
 	if err != nil {
