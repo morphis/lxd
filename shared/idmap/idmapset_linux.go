@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/lxc/lxd/shared"
+	"github.com/stretchr/powerwalk"
 )
 
 type IdRange struct {
@@ -534,7 +535,7 @@ func (set *IdmapSet) doUidshiftIntoContainer(dir string, testmode bool, how stri
 		return fmt.Errorf("No such file or directory: %q", dir)
 	}
 
-	return filepath.Walk(dir, convert)
+	return powerwalk.Walk(dir, convert)
 }
 
 func (set *IdmapSet) UidshiftIntoContainer(dir string, testmode bool) error {
