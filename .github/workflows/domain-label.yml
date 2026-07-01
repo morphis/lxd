@@ -15,7 +15,7 @@ permissions: {}
 
 jobs:
   check-domain-label:
-    if: ${{ github.repository == 'canonical/lxd' }}
+    #if: ${{ github.repository == 'canonical/lxd' }}
     permissions:
       pull-requests: write
     name: Verify domain label
