@@ -197,6 +197,10 @@ func (o *Verifier) verifySession(r *http.Request, w http.ResponseWriter, session
 			return nil, fmt.Errorf("Session token invalid: %w", err)
 		}
 
+		if sessionID == nil {
+			return nil, fmt.Errorf("Session token invalid: %w", err)
+		}
+
 		return o.handleExpiredSession(r, w, *sessionID)
 	}
 
@@ -341,7 +345,9 @@ func (o *Verifier) verifySessionToken(ctx context.Context, sessionToken string) 
 	// Verify the token.
 	err = bearer.VerifySessionToken(sessionToken, secret.Value, *sessionID)
 	if err != nil {
-		return nil, false, fmt.Errorf("Session token is not valid: %w", err)
+		// Return the parsed session ID even on verification failure. Callers need it on the
+		// jwt.ErrTokenExpired path to refresh the session without requiring the client to log in again.
+		return sessionID, false, fmt.Errorf("Session token is not valid: %w", err)
 	}
 
 	return sessionID, staleSigningKey, nil
