@@ -726,11 +726,11 @@ test_basic_usage() {
   lxc project delete foo
 
   # Test --all against an empty project is a clean no-op.
-  lxc project create bg002empty
+  lxc project create empty-project
   for action in start stop restart pause; do
-    lxc "${action}" --all --project bg002empty
+    lxc "${action}" --all --project empty-project
   done
-  lxc project delete bg002empty
+  lxc project delete empty-project
 
   # The `lxd start --all` and `lxc stop --all` tests creation bulk operation with the parent operation of type 72 (InstanceStateUpdateBulk).
   # Bulk operations are persisted for 24 hours, so we need to clean them up.
