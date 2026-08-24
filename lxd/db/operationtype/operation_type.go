@@ -147,6 +147,7 @@ const (
 	ProjectReplicaModeUpdate
 	ReplicatorRunInstanceRestore
 	ReplicatorFinalize
+	InstanceStateUpdateEmpty
 
 	// upperBound is used only to enforce consistency in the package on init.
 	// Make sure it's always the last item in this list.
@@ -309,6 +310,8 @@ func (t Type) Description() string {
 		return "Creating scheduled volume snapshots"
 	case InstanceStateUpdateBulk:
 		return "Updating the state of multiple instances"
+	case InstanceStateUpdateEmpty:
+		return "Updating the state of instances"
 	case VolumeSnapshotTransfer:
 		return "Transferring volume snapshot"
 	case ProjectDelete:
@@ -427,7 +430,7 @@ func (t Type) EntityType() entity.Type {
 	// If creating a resource, then the parent project is the primary entity
 	// (the entity being created is not yet referenceable).
 	case VolumeCreate, ProjectRename, InstanceCreate, ImageDownload, ImageUploadToken, CustomVolumeBackupRestore,
-		InstanceStateUpdateBulk, BackupRestore, ProjectDelete, NetworkCreate, NetworkACLCreate, StorageBucketCreate,
+		InstanceStateUpdateBulk, InstanceStateUpdateEmpty, BackupRestore, ProjectDelete, NetworkCreate, NetworkACLCreate, StorageBucketCreate,
 		NetworkZoneCreate, ProjectReplicaModeUpdate, ReplicatorRunInstanceRestore:
 		return entity.TypeProject
 

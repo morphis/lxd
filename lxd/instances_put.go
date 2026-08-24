@@ -175,6 +175,28 @@ func instancesPut(d *Daemon, r *http.Request) response.Response {
 		return response.BadRequest(err)
 	}
 
+	// If there are no instances to update, return a no-op operation so callers
+	// still get a valid async response without creating an invalid empty bulk operation.
+	if len(instances) == 0 {
+		projectURL := api.NewURL().Path(version.APIVersion, "projects", projectName)
+		args := operations.OperationArgs{
+			ProjectName: projectName,
+			EntityURL:   projectURL,
+			Type:        operationtype.InstanceStateUpdateEmpty,
+			Class:       operationtype.OperationClassTask,
+			RunHook: func(ctx context.Context, op *operations.Operation) error {
+				return nil
+			},
+		}
+
+		op, err := operations.ScheduleUserOperationFromRequest(s, r, args)
+		if err != nil {
+			return response.InternalError(err)
+		}
+
+		return response.OperationResponse(op)
+	}
+
 	childArgs := make([]*operations.OperationArgs, 0, len(instances))
 	for _, inst := range instances {
 		// Create a run hook function for the child operations that captures the instance in its closure.

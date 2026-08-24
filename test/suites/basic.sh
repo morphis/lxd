@@ -725,6 +725,13 @@ test_basic_usage() {
   lxc image delete testimage --project foo
   lxc project delete foo
 
+  # Test --all against an empty project is a clean no-op.
+  lxc project create bg002empty
+  for action in start stop restart pause; do
+    lxc "${action}" --all --project bg002empty
+  done
+  lxc project delete bg002empty
+
   # The `lxd start --all` and `lxc stop --all` tests creation bulk operation with the parent operation of type 72 (InstanceStateUpdateBulk).
   # Bulk operations are persisted for 24 hours, so we need to clean them up.
   lxd sql global 'DELETE FROM operations WHERE type=72'
